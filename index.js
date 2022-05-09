@@ -58,7 +58,7 @@ async function run() {
 
 //update api
         //http://localhost:4000/user/62797a0e7734f26ba197b4e3
-        
+
         app.put('/user/:id', async (req, res) => {
             
             const id = req.params.id
@@ -89,7 +89,6 @@ async function run() {
             const id = req.params.id
             const filter = { _id: ObjectId(id) };
             const result = await usercollection.deleteOne(filter)
-
 
             res.send(result);
         })

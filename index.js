@@ -49,7 +49,6 @@ async function run() {
 //     "textData":"hellow2"
 // }      
         
-        
         app.post('/user', async (req, res) => {
             const newUser = req.body;
            const result = await usercollection.insertOne(newUser)

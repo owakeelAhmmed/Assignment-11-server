@@ -2,18 +2,17 @@ const express = require('express');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
 const app = express();
+require('dotenv').config();
 const port = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
    
 
-//user: dbowakel
-//password: 7vrn5HtKfA4RcHWj
 
 
 
-const uri = "mongodb+srv://dbowakel:7vrn5HtKfA4RcHWj@cluster0.qvjmj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qvjmj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -35,9 +34,17 @@ async function run() {
             const q = req.query;
             console.log(q);
 
-            const user = usercollection.find({});
-            const result = await user.toArray();
+            const cursor = usercollection.find(q);
+            const users = await cursor.toArray();
 
+            res.send(users);
+        })
+
+        app.get('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            console.log(id);
+            const result = await usercollection.findOne(query);
             res.send(result);
         })
         
@@ -54,23 +61,25 @@ async function run() {
            const result = await usercollection.insertOne(newUser)
             res.send(result);
         })
+
  
 
+        
 //update api
         //http://localhost:4000/user/62797a0e7734f26ba197b4e3
 
         app.put('/user/:id', async (req, res) => {
             
             const id = req.params.id
-            const newUser = req.body;
+            const updatedUser = req.body;
 
 
-            const filter = { _id: ObjectId(id) };
+            const filter = { id: ObjectId(id) };
             const options = {upsert: true };
 
             const updateDoc = {
                 $set: {
-                   ...newUser
+                   ...updatedUser
             },
             };
 
@@ -86,9 +95,9 @@ async function run() {
         
         
         app.delete('/user/:id', async (req, res) => {
-            const id = req.params.id
-            const filter = { _id: ObjectId(id) };
-            const result = await usercollection.deleteOne(filter)
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await usercollection.deleteOne(query);
 
             res.send(result);
         })

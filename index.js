@@ -24,7 +24,7 @@ async function run() {
     try {
         await client.connect();
         const usercollection = client.db("mediHouse").collection("user");
-
+        const oderCollection = client.db("mediHouse").collection("order");
 
  
 // get api 
@@ -51,10 +51,7 @@ async function run() {
 //create  medi-house    
 // http://localhost:4000/user  
 
-//   {
-//     "userName":"owakeel2",
-//     "textData":"hellow2"
-// }      
+     
         
         app.post('/user', async (req, res) => {
             const newUser = req.body;
@@ -102,7 +99,13 @@ async function run() {
             res.send(result);
         })
 
+//Order api
 
+        app.post('/order', async (req, res) => {
+            const order = req.body;
+            const result = await oderCollection.insertOne(order);
+            res.send(result);
+            })
 
 
 
